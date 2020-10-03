@@ -1,5 +1,5 @@
 #include "udp_transport_datagram_internal.h"
-#include "ip.h"
+#include "uxr/client/profile/transport/ip/ip.h"
 
 bool uxr_init_udp_transport_datagram(
         struct uxrUDPTransportDatagram* transport) { return false; }

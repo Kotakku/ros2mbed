@@ -23,5 +23,8 @@
 #define USER_ROS2_PUBLISHER_MAX  10 
 #define USER_ROS2_SUBSCRIBER_MAX 10
 
+// Set serial interface type (e.g. BufferedSerial, UnbufferedSerial)
+#define USER_SERIAL_TYPE BufferedSerial
+
 
 #endif /* ROS2ARDUINO_USER_CONFIG_H_ */

@@ -3,6 +3,7 @@
 
 #include "../../transport_mbed_internal.h"
 #include <stdlib.h>
+#include "../ip.h"
 
 bool uxr_init_tcp_platform(struct uxrTCPPlatform* platform, uxrIpProtocol ip_protocol,
   const char* ip, const char* port)

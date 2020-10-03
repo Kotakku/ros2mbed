@@ -4,9 +4,10 @@
 // #include <Client.h>
 #include <xrcedds/dds_time.h>
 #include <ctime>
+#include "user_config.h"
 
 
-static BufferedSerial *p_serial;
+static USER_SERIAL_TYPE *p_serial;
 
 bool uxr_initSerialMbed(void *serial_instance)
 {
@@ -14,7 +15,7 @@ bool uxr_initSerialMbed(void *serial_instance)
 
   if(serial_instance == NULL)
     printf("serial instance is NULL, please \"ros2::init();\" before create Node instance.");
-  p_serial = (BufferedSerial*) serial_instance;
+  p_serial = (USER_SERIAL_TYPE*) serial_instance;
 
   return rv;
 }
@@ -80,28 +81,6 @@ size_t uxr_writeUdpDataMbed(const uint8_t* buf, size_t len)
 size_t uxr_readUdpDataMbed(uint8_t* buf, size_t len, int timeout)
 {
 	return 0;
-}
-
-bool uxr_connectTcpMbed(void* client_instance, const char* ip_address, uint16_t port)
-{
-	return true;
-}
-bool uxr_closeTcpMbed()
-{
-	return true;
-}
-size_t uxr_writeTcpDataMbed(const uint8_t* buf, size_t len)
-{
-	return true;
-}
-
-size_t uxr_readTcpDataMbed(uint8_t* buf, size_t len, int timeout)
-{
-	return 0;
-}
-bool uxr_disconnectTcpMbed()
-{
-	return true;
 }
 
 /*
@@ -180,72 +159,102 @@ size_t uxr_readUdpDataMbed(uint8_t* buf, size_t len, int timeout)
   return rv;
 }
 
+*/
 
-
-static Client* p_client;
+#if MBED_CONF_NSAPI_PRESENT
+static NetworkInterface *client_interface;
+static TCPSocket *tcp_socket;
+static bool is_tcp_connect = false;
 
 bool uxr_connectTcpMbed(void* client_instance, const char* ip_address, uint16_t port)
 {
-  bool rv = false;
+  nsapi_size_or_error_t result;
 
   if(client_instance == nullptr)
   {
+    printf("Client instance is NULL, please \"ros2::init();\" before create Node instance.");
     return false;
   }
 
-  p_client = (Client*)client_instance;
-  rv = p_client->connect(ip_address, port);
+  client_interface = (NetworkInterface*)client_instance;
 
-  return rv;
+  //rv = client_interface->connect(ip_address, port);
+  result = client_interface->connect();
+
+  if(result >= 0)
+  {
+    SocketAddress addr(ip_address, port);
+    tcp_socket = new TCPSocket();
+    result = tcp_socket->open(client_interface);
+
+    if(result >= 0)
+    {
+      result = tcp_socket->connect(addr);
+
+      if (result >= 0)
+        is_tcp_connect = true;
+    }    
+  }
+
+  return is_tcp_connect;
 }
 
 bool uxr_closeTcpMbed()
 {
-  p_client->stop();
+  //p_client->stop();
+  tcp_socket->close();
+  delete tcp_socket;
+  is_tcp_connect = false;
 
   return true;
 }
 
 size_t uxr_writeTcpDataMbed(const uint8_t* buf, size_t len)
 {
-  size_t tx_len = 0;
+  int tx_len = 0;
 
-  if(p_client->connected())
-  {
-    tx_len = p_client->write(buf, len);
-  }
+//   if(p_client->connected())
+//   {
+//     tx_len = p_client->write(buf, len);
+//   }
 
-  return tx_len;
+  if(is_tcp_connect)
+    tx_len = tcp_socket->send(buf, len);
+    
+  return (tx_len >= 0 ? tx_len : 0);
 }
 
 size_t uxr_readTcpDataMbed(uint8_t* buf, size_t len, int timeout)
 {
-  size_t rv = 0;
-  uint32_t pre_time = millis();
+  int rv = 0;
+  uint32_t pre_time = dds_getMilliseconds();
 
-  while (rv <= 0 && (millis() - pre_time < (uint32_t)timeout))
-  {
-    rv = p_client->available();
-  }
+  // while (rv <= 0 && (dds_getMilliseconds() - pre_time < (uint32_t)timeout))
+  // {
+  //   //rv = p_client->available();
+  // }
 
-  if(rv > len)
-  {
-    rv = len;
-  }
+  // if(rv > len)
+  // {
+  //   rv = len;
+  // }
 
-  if (0 < rv)
-  {
-    p_client->read(buf, len);
-  }
+  // if (0 < rv)
+  // {
+  //   rv = tcp_socket->read(buf, len);
+  // }
+
+  rv = tcp_socket->recv(buf, len);
   
-  return rv;
+  return (rv >= 0 ? rv : 0);
 }
 
 bool uxr_disconnectTcpMbed()
 {
-  p_client->stop();
-
+  //p_client->stop();
+  client_interface->disconnect();
+  is_tcp_connect = false;
   return true;
 }
 
-*/
+#endif

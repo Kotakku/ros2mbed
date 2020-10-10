@@ -11,11 +11,16 @@
 #include <stdio.h>
 #include "xrcedds/xrcedds.hpp"
 #include "xrcedds/dds_time.h"
-
+#include <functional>
 
 namespace ros2 {
 
-typedef void(*CallbackFunc)(void* msg, void* arg);
+//typedef void(*CallbackFunc)(void* msg, void* arg);
+
+template<typename MsgT>
+using CallbackFunc = std::function<void(MsgT* msg)>;
+//using CallbackFunc = std::function<void(MsgT* msg, void* arg)>;
+
 
 enum MessagePrefix{
   TOPICS_PUBLISH = 0,
@@ -28,7 +33,6 @@ enum MessagePrefix{
 };
 const char* getPrefixString(MessagePrefix prefix);
 
-
 class PublisherHandle
 {
  
@@ -36,16 +40,14 @@ public:
   PublisherHandle()
     : is_registered_(false), writer_id_(0)
   {
-    callback = nullptr;
-    callback_arg = nullptr;
+    //callback_arg = nullptr;
     pub_msg_cnt_ = 0;
     callback_interval_ms_ = 0;
     last_call_time_ms_ = 0;
   }
   virtual ~PublisherHandle(){}
 
-  CallbackFunc callback;
-  void*        callback_arg;
+  //void*        callback_arg;
   virtual void recreate(void) = 0;
   virtual void publish(void) = 0;
   virtual void destroy(void) = 0;
@@ -75,22 +77,19 @@ private:
   uint32_t callback_interval_ms_;
 };
 
-
-class SubscriberHandle
+class SubscriptionHandle
 {
 
 public:
-  SubscriberHandle()
+  SubscriptionHandle()
     : is_registered_(false), request_id_(0), reader_id_(0)
   {
-    callback = nullptr;
-    callback_arg = nullptr;
+    //callback_arg = nullptr;
     sub_msg_cnt_ = 0;
   }
-  virtual ~SubscriberHandle(){};
+  virtual ~SubscriptionHandle(){};
 
-  CallbackFunc callback;
-  void*        callback_arg;
+  //void*        callback_arg;
   virtual void recreate(void) = 0;
   virtual void subscribe(void) = 0;
   virtual void destroy(void) = 0;

@@ -20,6 +20,7 @@ class Topic
 {
 
 public:
+  using SharedPtr = Topic<MsgT>*;
 
   Topic(const char* type, const char* name, uint8_t id):
     type_(type),

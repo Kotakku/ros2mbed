@@ -20,17 +20,20 @@ namespace ros2
 class Node;
 
 template <typename MsgT>
-class Subscriber:public SubscriberHandle
+class Subscription:public SubscriptionHandle
 {
 
-  public:
-    Subscriber(xrcedds::Subscriber_t* subscriber, const char* name, CallbackFunc callback, void* callback_arg)
-      : SubscriberHandle()
+public:
+    CallbackFunc<MsgT> callback;
+    
+    template<typename CallbackT>
+    Subscription(xrcedds::Subscriber_t* subscriber, const char* name, CallbackT callback)
+      : SubscriptionHandle()
     {
       name_ = name;
       subscriber_ = subscriber;
       this->callback = callback;
-      this->callback_arg = callback_arg;
+      //this->callback_arg = callback_arg;
       this->recreate();
     }
 
@@ -51,7 +54,7 @@ class Subscriber:public SubscriberHandle
       {
         topic_.deserialize((ucdrBuffer*)serialized_msg, &topic_);
 
-        this->callback(&topic_, this->callback_arg);
+        this->callback(&topic_);
       }
     }
 

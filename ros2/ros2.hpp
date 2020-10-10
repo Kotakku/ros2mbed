@@ -10,9 +10,10 @@
 
 #include <string.h>
 #include "publisher.hpp"
-#include "subscriber.hpp"
+#include "subscription.hpp"
 #include "topic.hpp"
 #include "msg_list.hpp"
+#include <functional>
 
 #define ROS2_PUBLISHER_MAX  USER_ROS2_PUBLISHER_MAX
 #define ROS2_SUBSCRIBER_MAX USER_ROS2_SUBSCRIBER_MAX
@@ -28,21 +29,36 @@ class Node
     virtual ~Node(){};
 
     bool getNodeRegisteredState();
+    
+    template<typename CallbackT, typename MsgT>
+    void create_wall_timer(Publisher<MsgT>* pub, uint32_t msec, CallbackT callback/*, void* callback_arg, Publisher<MsgT>* pub*/)
+    {
+      if(pub == nullptr)
+      {
+        return;
+      }
 
+      pub->setInterval(msec);
+      pub->pub_callback = callback;
+      //pub->callback_arg = callback_arg;
+    }
+
+    // template<typename CallbackT>
+    // void create_wall_freq(uint32_t hz, CallbackT callback, void* callback_arg, PublisherHandle* pub);
+
+//protected:
     void recreate(const char* node_name = "ros2_xrcedds_participant",unsigned int client_key=0xAABBCCDD);
-    void createWallTimer(uint32_t msec, CallbackFunc callback, void* callback_arg, PublisherHandle* pub);
-    void createWallFreq(uint32_t hz, CallbackFunc callback, void* callback_arg, PublisherHandle* pub);
-    void runPubCallback();
-    void runSubCallback(uint16_t reader_id, void* serialized_msg);
 
-    void deletePublisher(const char* name);
-    void deletePublisher(uint16_t writer_id);
-    void deleteSubscriber(const char* name);
-    void deleteSubscriber(uint16_t reader_id);
+    void run_pub_callback();
+    void run_sub_callback(uint16_t reader_id, void* serialized_msg);
 
-    template <
-      typename MsgT>
-    Publisher<MsgT>* createPublisher(const char* name)
+    void delete_publisher(const char* name);
+    void delete_publisher(uint16_t writer_id);
+    void delete_subscriber(const char* name);
+    void delete_subscriber(uint16_t reader_id);
+
+    template <typename MsgT>
+    Publisher<MsgT>* create_publisher(const char* name)
     {
       bool ret = false;
       ros2::Publisher<MsgT> *p_pub = nullptr;
@@ -86,12 +102,11 @@ class Node
       return p_pub;
     }
 
-    template <
-      typename MsgT>
-    Subscriber<MsgT>* createSubscriber(const char* name, CallbackFunc callback, void* callback_arg)
+    template <typename MsgT, typename CallbackT>
+    Subscription<MsgT>* create_subscription(const char* name, CallbackT callback)
     {
       bool ret = false;
-      ros2::Subscriber<MsgT> *p_sub = nullptr;
+      ros2::Subscription<MsgT> *p_sub = nullptr;
 
       if(this->node_register_state_ == false)
       {
@@ -111,7 +126,7 @@ class Node
         return nullptr;
       }
 
-      p_sub = new ros2::Subscriber<MsgT>(&this->xrcedds_subscriber_, name, callback, callback_arg);
+      p_sub = new ros2::Subscription<MsgT>(&this->xrcedds_subscriber_, name, callback);
 
       if(p_sub->is_registered_ == false)
       {
@@ -134,8 +149,8 @@ class Node
     }
 
   private:
-    PublisherHandle*  pub_list_[ROS2_PUBLISHER_MAX];
-    SubscriberHandle* sub_list_[ROS2_SUBSCRIBER_MAX];
+    PublisherHandle*    pub_list_[ROS2_PUBLISHER_MAX];
+    SubscriptionHandle* sub_list_[ROS2_SUBSCRIBER_MAX];
 
     bool node_register_state_;
     xrcedds::Transport_t xrcedds_transport_;
@@ -167,6 +182,7 @@ class Node
 bool init(void* serial_dev);
 bool init(void* comm_instance, const char* p_server_ip, uint16_t server_port, bool enable_tcp);
 void spin(Node *node);
+void spin_once(Node *node);
 void syncTimeFromRemote(builtin_interfaces::Time* time);
 builtin_interfaces::Time now();
 

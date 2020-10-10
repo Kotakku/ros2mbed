@@ -45,10 +45,18 @@ bool ros2::init(void* comm_instance, const char* p_server_ip, uint16_t server_po
 
 void ros2::spin(ros2::Node *node)
 {
+  while(1)
+  {
+    spin_once(node);
+  }
+}
+
+void ros2::spin_once(ros2::Node *node)
+{
   if(node == nullptr)
     return;
 
-  node->runPubCallback();
+  node->run_pub_callback();
 
   if(xrcedds::runCommunication(1) == false)
   {
@@ -119,7 +127,7 @@ void ros2::runNodeSubUserCallback(uint16_t id, void* msgs, void* args)
 
   if(p_node != nullptr)
   {
-    p_node->runSubCallback(id, msgs);
+    p_node->run_sub_callback(id, msgs);
   }
 }
 
@@ -200,30 +208,30 @@ void ros2::Node::recreate(const char* node_name, unsigned int client_key)
 
 
 
-void ros2::Node::createWallTimer(uint32_t msec, CallbackFunc callback, void* callback_arg, PublisherHandle* pub)
-{
-  if(pub == nullptr)
-  {
-    return;
-  }
+// void ros2::Node::createWallTimer(uint32_t msec, CallbackFunc callback, void* callback_arg, PublisherHandle* pub)
+// {
+//   if(pub == nullptr)
+//   {
+//     return;
+//   }
 
-  pub->setInterval(msec);
-  pub->callback = callback;
-  pub->callback_arg = callback_arg;
-}
+//   pub->setInterval(msec);
+//   pub->callback = callback;
+//   pub->callback_arg = callback_arg;
+// }
 
-void ros2::Node::createWallFreq(uint32_t hz, CallbackFunc callback, void* callback_arg, PublisherHandle* pub)
-{
-  uint32_t msec;
-  if(hz > 1000)
-  {
-    hz = 1000;
-  }
-  msec = (uint32_t)(1000/hz);
-  this->createWallTimer(msec, callback, callback_arg, pub);
-}
+// void ros2::Node::createWallFreq(uint32_t hz, CallbackFunc callback, void* callback_arg, PublisherHandle* pub)
+// {
+//   uint32_t msec;
+//   if(hz > 1000)
+//   {
+//     hz = 1000;
+//   }
+//   msec = (uint32_t)(1000/hz);
+//   this->createWallTimer(msec, callback, callback_arg, pub);
+// }
 
-void ros2::Node::runPubCallback()
+void ros2::Node::run_pub_callback()
 {
   uint8_t i;
   ros2::PublisherHandle *p_pub;
@@ -238,10 +246,10 @@ void ros2::Node::runPubCallback()
   }
 }
 
-void ros2::Node::runSubCallback(uint16_t reader_id, void* serialized_msg)
+void ros2::Node::run_sub_callback(uint16_t reader_id, void* serialized_msg)
 {
   uint8_t i;
-  ros2::SubscriberHandle *p_sub;
+  ros2::SubscriptionHandle *p_sub;
   for(i = 0; i < ROS2_SUBSCRIBER_MAX; i++)
   {
     p_sub = sub_list_[i];
@@ -252,7 +260,7 @@ void ros2::Node::runSubCallback(uint16_t reader_id, void* serialized_msg)
   }
 }
 
-void ros2::Node::deletePublisher(const char* name)
+void ros2::Node::delete_publisher(const char* name)
 {
   PublisherHandle *publisher;
 
@@ -270,7 +278,7 @@ void ros2::Node::deletePublisher(const char* name)
   }
 }
 
-void ros2::Node::deletePublisher(uint16_t writer_id)
+void ros2::Node::delete_publisher(uint16_t writer_id)
 {
   PublisherHandle *publisher;
 
@@ -288,9 +296,9 @@ void ros2::Node::deletePublisher(uint16_t writer_id)
   }
 }
 
-void ros2::Node::deleteSubscriber(const char* name)
+void ros2::Node::delete_subscriber(const char* name)
 {
-  SubscriberHandle *subscriber;
+  SubscriptionHandle *subscriber;
 
   for(uint8_t i = 0; i < ROS2_SUBSCRIBER_MAX; i++)
   {
@@ -306,9 +314,9 @@ void ros2::Node::deleteSubscriber(const char* name)
   }
 }
 
-void ros2::Node::deleteSubscriber(uint16_t reader_id)
+void ros2::Node::delete_subscriber(uint16_t reader_id)
 {
-  SubscriberHandle *subscriber;
+  SubscriptionHandle *subscriber;
 
   for(uint8_t i = 0; i < ROS2_SUBSCRIBER_MAX; i++)
   {

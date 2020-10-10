@@ -20,6 +20,8 @@ class Publisher:public PublisherHandle
 {
  
 public:
+  CallbackFunc<MsgT> pub_callback;
+  
   Publisher(xrcedds::Publisher_t* publisher, const char* name)
     : PublisherHandle()
   {
@@ -35,12 +37,12 @@ public:
       return;
     }
 
-    if(callback != nullptr)
+    if(pub_callback != nullptr)
     {
-      callback((void*)&topic_, callback_arg);
+      pub_callback(&topic_);
     }
 
-    this->publish(&topic_);
+    //this->publish(&topic_);
   }
 
   void publish(MsgT *msg)
@@ -75,6 +77,7 @@ private:
   MsgT topic_;
   xrcedds::Publisher_t* publisher_;
   xrcedds::DataWriter_t data_writer_;
+
 };
 
 

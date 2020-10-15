@@ -124,14 +124,15 @@ bool uxr_closeUdpMbed()
 
 size_t uxr_writeUdpDataMbed(const uint8_t* buf, size_t len)
 {
-  size_t tx_len = 0;
+  int tx_len = 0;
 
-#warning Todo:
-  // p_udp->beginPacket(remote_ip_addr, remote_port);
-  // tx_len = p_udp->write(buf, len);
-  // p_udp->endPacket();
+  printf("[uxr_writeUdpDataMbed] len:%d\n", len);
 
-  return tx_len;
+  tx_len = udp_socket->sendto(udp_remote_addr, buf, len);
+
+  printf("[uxr_writeUdpDataMbed] tx_len:%d\n", tx_len);
+
+  return (tx_len > 0 ? tx_len : 0);
 }
 
 size_t uxr_readUdpDataMbed(uint8_t* buf, size_t len, int timeout)
@@ -139,24 +140,17 @@ size_t uxr_readUdpDataMbed(uint8_t* buf, size_t len, int timeout)
   size_t rv = 0;
   uint32_t pre_time = dds_getMilliseconds();
 
-#warning Todo:
-  // while (rv <= 0 && (dds_getMilliseconds() - pre_time < (uint32_t)timeout))
-  // {
-  //   p_udp->parsePacket();
-  //   rv = p_udp->available();
-  // }
 
-  // if(rv > len)
-  // {
-  //   rv = len;
-  // }
+  printf("[uxr_readUdpDataMbed] len: %d, timeout: %d\n", len, timeout);
 
-  // if (0 < rv)
-  // {
-  //   p_udp->read(buf, len);
-  // }
-  
-  return rv;
+  while (rv <= 0 && (dds_getMilliseconds() - pre_time < (uint32_t)timeout))
+  {
+    rv = udp_socket->recv(buf, len);
+  }
+
+  printf("[uxr_readUdpDataMbed] rv: %d\n", rv);
+
+  return (rv > 0 ? rv : 0);
 }
 
 static NetworkInterface *client_interface;

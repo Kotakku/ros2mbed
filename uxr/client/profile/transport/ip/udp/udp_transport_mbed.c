@@ -28,6 +28,8 @@ size_t uxr_write_udp_data_platform(uxrUDPPlatform* platform, const uint8_t* buf,
 
   (void)(platform);
   (void)(errcode);
+
+ // printf("[ uxr_write_udp_data_platform ]\n");
   rv = uxr_writeUdpDataMbed(buf, len);
 
   return rv;

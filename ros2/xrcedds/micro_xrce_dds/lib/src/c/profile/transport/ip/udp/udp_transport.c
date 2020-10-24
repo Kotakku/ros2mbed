@@ -21,6 +21,7 @@ static bool send_udp_msg(void* instance, const uint8_t* buf, size_t len)
     uxrUDPTransport* transport = (uxrUDPTransport*)instance;
 
     uint8_t errcode;
+    //printf("[ send_udp_msg ]\n");
     size_t bytes_sent = uxr_write_udp_data_platform(transport->platform, buf, len, &errcode);
     if (0 < bytes_sent)
     {

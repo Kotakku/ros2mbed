@@ -42,7 +42,7 @@ public:
       pub_callback(&topic_);
     }
 
-    //this->publish(&topic_);
+    this->publish(&topic_);
   }
 
   void publish(MsgT *msg)

@@ -14,10 +14,10 @@
 // options: UDP:    0
 //          TCP:    1
 //          SERIAL: 2
-#define USER_TRANSPORT_TYPE   2
+#define USER_TRANSPORT_TYPE  0
 
 // Set the MTU of the transport.
-#define USER_TRANSPORT_MTU    2048
+#define USER_TRANSPORT_MTU    1024
 
 // Set the maximum number of Pub/Subs to be created on the node.
 #define USER_ROS2_PUBLISHER_MAX  10 

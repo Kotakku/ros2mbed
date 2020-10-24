@@ -63,6 +63,7 @@ bool uxr_prepare_output_stream(uxrSession* session, uxrStreamId stream_id, uxrOb
                                ucdrBuffer* ub, uint32_t topic_size)
 {
     size_t payload_size = WRITE_DATA_PAYLOAD_SIZE + topic_size;
+
     ub->error = !uxr_prepare_stream_to_write_submessage(session, stream_id, payload_size, ub, SUBMESSAGE_ID_WRITE_DATA, FORMAT_DATA);
     if(!ub->error)
     {

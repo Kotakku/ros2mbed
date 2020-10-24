@@ -60,6 +60,7 @@ void ros2::spin_once(ros2::Node *node)
 
   if(xrcedds::runCommunication(1) == false)
   {
+    //printf("no connection!!!\n");
     //node->recreate();
   }
 }

@@ -59,10 +59,7 @@ bool uxr_prepare_reliable_buffer_to_write(uxrOutputReliableStream* stream, size_
         /* Check if there is space in the stream history to write */
         uxrSeqNum last_available = uxr_seq_num_add(stream->last_acknown, stream->base.history);
         available_to_write = (0 >= uxr_seq_num_cmp(seq_num, last_available));
-        /*
-        printf("to_write(1): %d, (%d, %d)(%d, %d)\n", available_to_write, 
-            stream->last_acknown, stream->base.history, seq_num, last_available);
-            */
+
         if(available_to_write)
         {
             size_t final_buffer_size = buffer_size + length;
@@ -117,7 +114,6 @@ bool uxr_prepare_reliable_buffer_to_write(uxrOutputReliableStream* stream, size_
         }
 
         available_to_write = necessary_blocks <= remaining_blocks;
-        printf("to_write(3): %d\n", available_to_write);
         if(available_to_write)
         {
             ucdrBuffer temp_ub;
@@ -239,7 +235,6 @@ void uxr_process_acknack(uxrOutputReliableStream* stream, uint16_t bitmap, uxrSe
 {
     uxrSeqNum last_acked_seq_num = uxr_seq_num_sub(first_unacked_seq_num, 1);
     size_t buffers_to_clean = uxr_seq_num_sub(last_acked_seq_num, stream->last_acknown);
-    //printf("[uxr_process_acknack] %d\n", buffers_to_clean);
     for(size_t i = 0; i < buffers_to_clean; i++)
     {
         stream->last_acknown = uxr_seq_num_add(stream->last_acknown, 1);

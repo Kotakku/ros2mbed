@@ -6,7 +6,7 @@
  */
 
 #include "ros2.hpp"
-
+#include "mbed.h"
 
 static xrcedds::XrceDdsCommportType g_client_communication_method;
 static const char* g_server_ip;
@@ -48,6 +48,7 @@ void ros2::spin(ros2::Node *node)
   while(1)
   {
     spin_once(node);
+    ThisThread::sleep_for(1ms);
   }
 }
 
@@ -60,7 +61,6 @@ void ros2::spin_once(ros2::Node *node)
 
   if(xrcedds::runCommunication(1) == false)
   {
-    //printf("no connection!!!\n");
     //node->recreate();
   }
 }

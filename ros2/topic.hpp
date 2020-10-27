@@ -9,6 +9,7 @@
 #define ROS2_TOPIC_HPP_
 
 #include <stdlib.h>
+#include <memory>
 #include "xrcedds/xrcedds.hpp"
 #include "topic_id_number.h"
 
@@ -20,7 +21,7 @@ class Topic
 {
 
 public:
-  using SharedPtr = Topic<MsgT>*;
+  using SharedPtr = std::shared_ptr<Topic<MsgT>>;
 
   Topic(const char* type, const char* name, uint8_t id):
     type_(type),
@@ -47,10 +48,6 @@ public:
   uint8_t id_;
 };
 
-
-
 } // namespace ros2
-
-
 
 #endif /* ROS2_TOPIC_HPP_ */

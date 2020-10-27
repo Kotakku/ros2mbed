@@ -20,6 +20,7 @@
 #define USER_TRANSPORT_MTU    1024
 
 // Set the maximum number of Pub/Subs to be created on the node.
+#define USER_ROS2_TIMER_MAX      10
 #define USER_ROS2_PUBLISHER_MAX  10 
 #define USER_ROS2_SUBSCRIBER_MAX 10
 

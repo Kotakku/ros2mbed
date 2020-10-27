@@ -6,7 +6,9 @@
  */
 
 #include "ros2.hpp"
+#include "TimerBase.h"
 #include "mbed.h"
+#include "node_handle.hpp"
 
 static xrcedds::XrceDdsCommportType g_client_communication_method;
 static const char* g_server_ip;
@@ -57,7 +59,7 @@ void ros2::spin_once(ros2::Node *node)
   if(node == nullptr)
     return;
 
-  node->run_pub_callback();
+  node->run_timer_callback();
 
   if(xrcedds::runCommunication(1) == false)
   {
@@ -191,47 +193,23 @@ void ros2::Node::recreate(const char* node_name, unsigned int client_key)
     uint8_t i;
     for (i = 0; i < ROS2_PUBLISHER_MAX; i++)
     {
-      if (pub_list_[i] != nullptr)
+      if (pub_list_[i])
       {
-        pub_list_[i]->recreate();
+        static_cast<PublisherHandle*>(pub_list_[i].get())->recreate();
       }
     }
 
     for (i = 0; i < ROS2_SUBSCRIBER_MAX; i++)
     {
-      if (sub_list_[i] != nullptr)
+      if (sub_list_[i])
       {
-        sub_list_[i]->recreate();
+        static_cast<SubscriptionHandle*>(sub_list_[i].get())->recreate();
       }
     }
   }
 }
 
-
-
-// void ros2::Node::createWallTimer(uint32_t msec, CallbackFunc callback, void* callback_arg, PublisherHandle* pub)
-// {
-//   if(pub == nullptr)
-//   {
-//     return;
-//   }
-
-//   pub->setInterval(msec);
-//   pub->callback = callback;
-//   pub->callback_arg = callback_arg;
-// }
-
-// void ros2::Node::createWallFreq(uint32_t hz, CallbackFunc callback, void* callback_arg, PublisherHandle* pub)
-// {
-//   uint32_t msec;
-//   if(hz > 1000)
-//   {
-//     hz = 1000;
-//   }
-//   msec = (uint32_t)(1000/hz);
-//   this->createWallTimer(msec, callback, callback_arg, pub);
-// }
-
+/*
 void ros2::Node::run_pub_callback()
 {
   uint8_t i;
@@ -246,6 +224,22 @@ void ros2::Node::run_pub_callback()
     }
   }
 }
+*/
+
+void ros2::Node::run_timer_callback()
+{
+  uint8_t i;
+  ros2::TimerBase::SharedPtr p_timer;
+  for(i = 0; i < ROS2_TIMER_MAX; i++)
+  {
+    p_timer = timer_list_[i];
+    if(p_timer && p_timer->isTimeToCallback())
+    {
+        p_timer->call();
+        break;
+    }
+  }
+}
 
 void ros2::Node::run_sub_callback(uint16_t reader_id, void* serialized_msg)
 {
@@ -253,13 +247,14 @@ void ros2::Node::run_sub_callback(uint16_t reader_id, void* serialized_msg)
   ros2::SubscriptionHandle *p_sub;
   for(i = 0; i < ROS2_SUBSCRIBER_MAX; i++)
   {
-    p_sub = sub_list_[i];
-    if(p_sub != nullptr && p_sub->is_registered_ && p_sub->reader_id_ == reader_id)
+    p_sub = static_cast<ros2::SubscriptionHandle *>(sub_list_[i].get());
+    if(sub_list_[i] && p_sub->is_registered_ && p_sub->reader_id_ == reader_id)
     {
       p_sub->runCallback(serialized_msg);
     }
   }
 }
+
 
 void ros2::Node::delete_publisher(const char* name)
 {
@@ -267,17 +262,17 @@ void ros2::Node::delete_publisher(const char* name)
 
   for(uint8_t i = 0; i < ROS2_SUBSCRIBER_MAX; i++)
   {
-    publisher = pub_list_[i];
+    publisher = static_cast<ros2::PublisherHandle *>(pub_list_[i].get());
     if(publisher != nullptr && !strcmp(publisher->name_, name))
     {
       publisher->destroy();
-      delete(publisher);
-      pub_list_[i] = nullptr;
+      pub_list_[i].reset();
       pub_cnt_--;
       break;
     }
   }
 }
+
 
 void ros2::Node::delete_publisher(uint16_t writer_id)
 {
@@ -285,12 +280,11 @@ void ros2::Node::delete_publisher(uint16_t writer_id)
 
   for(uint8_t i = 0; i < ROS2_SUBSCRIBER_MAX; i++)
   {
-    publisher = pub_list_[i];
+    publisher = static_cast<ros2::PublisherHandle *>(pub_list_[i].get());
     if(publisher != nullptr && publisher->writer_id_ == writer_id)
     {
       publisher->destroy();
-      delete(publisher);
-      pub_list_[i] = nullptr;
+      pub_list_[i].reset();
       pub_cnt_--;
       break;
     }
@@ -303,12 +297,11 @@ void ros2::Node::delete_subscriber(const char* name)
 
   for(uint8_t i = 0; i < ROS2_SUBSCRIBER_MAX; i++)
   {
-    subscriber = sub_list_[i];
+    subscriber = static_cast<ros2::SubscriptionHandle *>(sub_list_[i].get());
     if(subscriber != nullptr && !strcmp(subscriber->name_, name))
     {
       subscriber->destroy();
-      delete(subscriber);
-      sub_list_[i] = nullptr;
+      sub_list_[i].reset();
       sub_cnt_--;
       break;
     }
@@ -321,12 +314,11 @@ void ros2::Node::delete_subscriber(uint16_t reader_id)
 
   for(uint8_t i = 0; i < ROS2_SUBSCRIBER_MAX; i++)
   {
-    subscriber = sub_list_[i];
+    subscriber = static_cast<ros2::SubscriptionHandle *>(sub_list_[i].get());
     if(subscriber != nullptr && subscriber->reader_id_ == reader_id)
     {
       subscriber->destroy();
-      delete(subscriber);
-      sub_list_[i] = nullptr;
+      sub_list_[i].reset();
       sub_cnt_--;
       break;
     }

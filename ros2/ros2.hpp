@@ -8,17 +8,30 @@
 #ifndef ROS2_HPP_
 #define ROS2_HPP_
 
+#include <cstddef>
+#include <memory>
 #include <string.h>
 #include "publisher.hpp"
 #include "subscription.hpp"
 #include "topic.hpp"
 #include "msg_list.hpp"
 #include <functional>
+#include <chrono>
+#include <utility>
+#include "TimerBase.h"
 
+#define ROS2_TIMER_MAX      USER_ROS2_TIMER_MAX
 #define ROS2_PUBLISHER_MAX  USER_ROS2_PUBLISHER_MAX
 #define ROS2_SUBSCRIBER_MAX USER_ROS2_SUBSCRIBER_MAX
 
 namespace ros2 {
+
+bool init(void* serial_dev);
+bool init(void* comm_instance, const char* p_server_ip, uint16_t server_port, bool enable_tcp);
+void spin(Node *node);
+void spin_once(Node *node);
+void syncTimeFromRemote(builtin_interfaces::Time* time);
+builtin_interfaces::Time now();
 
 void runNodeSubUserCallback(uint16_t id, void* msgs, void* args);
 
@@ -29,27 +42,28 @@ class Node
     virtual ~Node(){};
 
     bool getNodeRegisteredState();
-    
-    template<typename CallbackT, typename MsgT>
-    void create_wall_timer(Publisher<MsgT>* pub, uint32_t msec, CallbackT callback/*, void* callback_arg, Publisher<MsgT>* pub*/)
+
+    TimerBase::SharedPtr create_wall_timer(std::chrono::milliseconds msec, std::function<void(void)> callback)
     {
-      if(pub == nullptr)
-      {
-        return;
-      }
+        TimerBase::SharedPtr timer = std::make_shared<TimerBase>(msec, callback);
 
-      pub->setInterval(msec);
-      pub->pub_callback = callback;
-      //pub->callback_arg = callback_arg;
+        for(size_t i = 0; i < ROS2_TIMER_MAX; i++)
+        {
+            if(!timer_list_[i])
+            {
+                timer_list_[i] = timer;
+                timer_cnt_++;
+                break;
+            }
+        }
+
+        return timer;
     }
-
-    // template<typename CallbackT>
-    // void create_wall_freq(uint32_t hz, CallbackT callback, void* callback_arg, PublisherHandle* pub);
 
 //protected:
     void recreate(const char* node_name = "ros2_xrcedds_participant",unsigned int client_key=0xAABBCCDD);
 
-    void run_pub_callback();
+    void run_timer_callback();
     void run_sub_callback(uint16_t reader_id, void* serialized_msg);
 
     void delete_publisher(const char* name);
@@ -58,10 +72,9 @@ class Node
     void delete_subscriber(uint16_t reader_id);
 
     template <typename MsgT>
-    Publisher<MsgT>* create_publisher(const char* name)
+    std::shared_ptr<Publisher<MsgT>> create_publisher(const char* name)
     {
       bool ret = false;
-      ros2::Publisher<MsgT> *p_pub = nullptr;
 
       if (this->node_register_state_ == false)
       {
@@ -80,18 +93,18 @@ class Node
       {
         return nullptr;
       }
-
-      p_pub = new ros2::Publisher<MsgT>(&this->xrcedds_publisher_, name);
+      
+      auto p_pub = std::make_shared<ros2::Publisher<MsgT>>(&this->xrcedds_publisher_, name);
 
       if (p_pub->is_registered_ == false)
       {
-        delete (p_pub);
+        p_pub.reset();
         return nullptr;
       }
 
       for (uint8_t i = 0; i < ROS2_PUBLISHER_MAX; i++)
       {
-        if (pub_list_[i] == nullptr)
+        if (!pub_list_[i])
         {
           pub_list_[i] = p_pub;
           pub_cnt_++;
@@ -101,12 +114,11 @@ class Node
 
       return p_pub;
     }
-
+    
     template <typename MsgT, typename CallbackT>
-    Subscription<MsgT>* create_subscription(const char* name, CallbackT callback)
+    std::shared_ptr<Subscription<MsgT>> create_subscription(const char* name, CallbackT callback)
     {
       bool ret = false;
-      ros2::Subscription<MsgT> *p_sub = nullptr;
 
       if(this->node_register_state_ == false)
       {
@@ -126,17 +138,17 @@ class Node
         return nullptr;
       }
 
-      p_sub = new ros2::Subscription<MsgT>(&this->xrcedds_subscriber_, name, callback);
+      auto p_sub = std::make_shared<ros2::Subscription<MsgT>>(&this->xrcedds_subscriber_, name, callback);
 
       if(p_sub->is_registered_ == false)
       {
-        delete(p_sub);
+        p_sub.reset();
         return nullptr;
       }
 
       for(uint8_t i = 0; i < ROS2_SUBSCRIBER_MAX; i++)
       {
-        if(sub_list_[i] == nullptr)
+        if(!sub_list_[i])
         {
           sub_list_[i] = p_sub;
           sub_cnt_++;
@@ -149,14 +161,22 @@ class Node
     }
 
   private:
+    TimerBase::SharedPtr timer_list_[ROS2_TIMER_MAX];
+
+    /*
     PublisherHandle*    pub_list_[ROS2_PUBLISHER_MAX];
     SubscriptionHandle* sub_list_[ROS2_SUBSCRIBER_MAX];
+    */
+
+    std::shared_ptr<void> pub_list_[ROS2_PUBLISHER_MAX];
+    std::shared_ptr<void> sub_list_[ROS2_SUBSCRIBER_MAX];
 
     bool node_register_state_;
     xrcedds::Transport_t xrcedds_transport_;
     xrcedds::Participant_t xrcedds_participant_;
     xrcedds::Publisher_t xrcedds_publisher_;
     xrcedds::Subscriber_t xrcedds_subscriber_;
+    uint8_t timer_cnt_;
     uint8_t pub_cnt_;
     uint8_t sub_cnt_;
 
@@ -178,16 +198,6 @@ class Node
     }
 };
 
-
-bool init(void* serial_dev);
-bool init(void* comm_instance, const char* p_server_ip, uint16_t server_port, bool enable_tcp);
-void spin(Node *node);
-void spin_once(Node *node);
-void syncTimeFromRemote(builtin_interfaces::Time* time);
-builtin_interfaces::Time now();
-
 } /* namespace ros2 */
-
-
 
 #endif /* ROS2_H_ */

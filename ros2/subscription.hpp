@@ -9,10 +9,10 @@
 #define ROS2_SUBSCRIBER_HPP_
 
 #include <stdio.h>
+#include <memory>
 #include "xrcedds/xrcedds.hpp"
 #include "node_handle.hpp"
 #include "topic.hpp"
-
 
 namespace ros2
 {
@@ -22,9 +22,10 @@ class Node;
 template <typename MsgT>
 class Subscription:public SubscriptionHandle
 {
-
 public:
-    CallbackFunc<MsgT> callback;
+    using SharedPtr = std::shared_ptr<Subscription>;
+
+    std::function<void(MsgT*)> callback;
     
     template<typename CallbackT>
     Subscription(xrcedds::Subscriber_t* subscriber, const char* name, CallbackT callback)
@@ -33,7 +34,6 @@ public:
       name_ = name;
       subscriber_ = subscriber;
       this->callback = callback;
-      //this->callback_arg = callback_arg;
       this->recreate();
     }
 

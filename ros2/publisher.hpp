@@ -12,13 +12,8 @@
 #include <memory>
 #include "xrcedds/xrcedds.hpp"
 #include "node_handle.hpp"
-#include "topic.hpp"
-#include "msg_list.hpp"
-#include "mbed.h"
 
 namespace ros2 {
-
-builtin_interfaces::Time now();
 
 template <typename MsgT>
 class Publisher:public PublisherHandle
@@ -34,7 +29,7 @@ public:
     this->recreate();
   }
 
-  void publish(MsgT *msg)
+  void publish(std::shared_ptr<MsgT> &msg)
   {
     if(is_registered_ ==  false)
     {
@@ -42,8 +37,8 @@ public:
     }
 
     ucdrBuffer mb;
-    xrcedds::writeData(&data_writer_, (void*)&mb, msg->size_of_topic(msg, 0));
-    msg->serialize(&mb, msg);
+    xrcedds::writeData(&data_writer_, (void*)&mb, msg->size_of_topic(msg.get(), 0));
+    msg->serialize(&mb, msg.get());
   }
 
   void recreate()
@@ -61,13 +56,11 @@ public:
   {
     xrcedds::deleteEntity(&data_writer_);
   }
-
-  MsgT topic_;
-private:
   
+private:
+  MsgT topic_;
   xrcedds::Publisher_t* publisher_;
   xrcedds::DataWriter_t data_writer_;
-
 };
 
 } // namespace ros2

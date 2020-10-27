@@ -37,7 +37,7 @@ void runNodeSubUserCallback(uint16_t id, void* msgs, void* args);
 
 class Node
 {
-  public:
+public:
     Node(const char* node_name = "ros2_xrcedds_participant",unsigned int client_key=0xAABBCCDD);
     virtual ~Node(){};
 
@@ -60,7 +60,6 @@ class Node
         return timer;
     }
 
-//protected:
     void recreate(const char* node_name = "ros2_xrcedds_participant",unsigned int client_key=0xAABBCCDD);
 
     void run_timer_callback();
@@ -115,8 +114,8 @@ class Node
       return p_pub;
     }
     
-    template <typename MsgT, typename CallbackT>
-    std::shared_ptr<Subscription<MsgT>> create_subscription(const char* name, CallbackT callback)
+    template <typename MsgT>
+    std::shared_ptr<Subscription<MsgT>> create_subscription(const char* name, std::function<void(MsgT*)> callback)
     {
       bool ret = false;
 
@@ -160,14 +159,8 @@ class Node
       return p_sub;
     }
 
-  private:
+private:
     TimerBase::SharedPtr timer_list_[ROS2_TIMER_MAX];
-
-    /*
-    PublisherHandle*    pub_list_[ROS2_PUBLISHER_MAX];
-    SubscriptionHandle* sub_list_[ROS2_SUBSCRIBER_MAX];
-    */
-
     std::shared_ptr<void> pub_list_[ROS2_PUBLISHER_MAX];
     std::shared_ptr<void> sub_list_[ROS2_SUBSCRIBER_MAX];
 

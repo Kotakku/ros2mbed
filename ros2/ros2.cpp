@@ -209,23 +209,6 @@ void ros2::Node::recreate(const char* node_name, unsigned int client_key)
   }
 }
 
-/*
-void ros2::Node::run_pub_callback()
-{
-  uint8_t i;
-  ros2::PublisherHandle *p_pub;
-  for(i = 0; i < ROS2_PUBLISHER_MAX; i++)
-  {
-    p_pub = pub_list_[i];
-    if(p_pub != nullptr && p_pub->is_registered_ && p_pub->isTimeToPublish())
-    {
-      p_pub->publish();
-      break;
-    }
-  }
-}
-*/
-
 void ros2::Node::run_timer_callback()
 {
   uint8_t i;

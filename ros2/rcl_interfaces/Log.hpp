@@ -10,15 +10,24 @@
 namespace rcl_interfaces
 {
 
+enum Log_Constants
+{
+    DEBUG = 10,
+    INFO = 20,
+    WARN = 30,
+    ERROR = 40,
+    FATAL = 50
+};
+
 class Log: public ros2::Topic<Log>
 {
 public:
     builtin_interfaces::Time stamp;
     uint8_t level;
-    char name[255];
-    char msg[255];
-    char file[255];
-    char function[255];
+    std::string name;
+    std::string msg;
+    std::string file;
+    std::string function;
     uint32_t line;
 
     Log()
@@ -26,10 +35,6 @@ public:
         level(0),
         line(0)
     {
-        memset(name, 0, sizeof(name));
-        memset(msg, 0, sizeof(msg));
-        memset(file, 0, sizeof(file));
-        memset(function, 0, sizeof(function));
     }
 
     bool serialize(void* msg_buf, const Log* topic)
@@ -37,10 +42,10 @@ public:
         ucdrBuffer* writer = (ucdrBuffer*)msg_buf;
         (void) stamp.serialize(writer, &topic->stamp);
         (void) ucdr_serialize_uint8_t(writer, topic->level);
-        (void) ucdr_serialize_string(writer, topic->name);
-        (void) ucdr_serialize_string(writer, topic->msg);
-        (void) ucdr_serialize_string(writer, topic->file);
-        (void) ucdr_serialize_string(writer, topic->function);
+        (void) ucdr_serialize_string(writer, topic->name.data());
+        (void) ucdr_serialize_string(writer, topic->msg.data());
+        (void) ucdr_serialize_string(writer, topic->file.data());
+        (void) ucdr_serialize_string(writer, topic->function.data());
         (void) ucdr_serialize_uint32_t(writer, topic->line);
 
         return !writer->error;
@@ -51,10 +56,10 @@ public:
         ucdrBuffer* reader = (ucdrBuffer*)msg_buf;
         (void) stamp.deserialize(reader, &topic->stamp);
         (void) ucdr_deserialize_uint8_t(reader, &topic->level);
-        (void) ucdr_deserialize_string(reader, topic->name, sizeof(topic->name));
-        (void) ucdr_deserialize_string(reader, topic->msg, sizeof(topic->msg));
-        (void) ucdr_deserialize_string(reader, topic->file, sizeof(topic->file));
-        (void) ucdr_deserialize_string(reader, topic->function, sizeof(topic->function));
+        (void) ucdr_deserialize_string(reader, topic->name.data(), topic->name.capacity());
+        (void) ucdr_deserialize_string(reader, topic->msg.data(), topic->msg.capacity());
+        (void) ucdr_deserialize_string(reader, topic->file.data(), topic->file.capacity());
+        (void) ucdr_deserialize_string(reader, topic->function.data(), topic->function.capacity());
         (void) ucdr_deserialize_uint32_t(reader, &topic->line);
 
         return !reader->error;
@@ -67,10 +72,10 @@ public:
         uint32_t previousSize = size;
         size += stamp.size_of_topic(&topic->stamp, size);
         size += ucdr_alignment(size, 1) + 1;
-        size += ucdr_alignment(size, 4) + 4 + (uint32_t)(strlen(topic->name) + 1);
-        size += ucdr_alignment(size, 4) + 4 + (uint32_t)(strlen(topic->msg) + 1);
-        size += ucdr_alignment(size, 4) + 4 + (uint32_t)(strlen(topic->file) + 1);
-        size += ucdr_alignment(size, 4) + 4 + (uint32_t)(strlen(topic->function) + 1);
+        size += ucdr_alignment(size, 4) + 4 + (uint32_t)(topic->name.length() + 1);
+        size += ucdr_alignment(size, 4) + 4 + (uint32_t)(topic->msg.length() + 1);
+        size += ucdr_alignment(size, 4) + 4 + (uint32_t)(topic->file.length() + 1);
+        size += ucdr_alignment(size, 4) + 4 + (uint32_t)(topic->function.length() + 1);
         size += ucdr_alignment(size, 4) + 4;
 
         return size - previousSize;

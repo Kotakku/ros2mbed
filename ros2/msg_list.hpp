@@ -35,9 +35,11 @@
 #include "sensor_msgs/Joy.hpp"
 
 #include "nav_msgs/Odometry.hpp"
+#include "nav_msgs/Path.hpp"
 
 #include "geometry_msgs/Point.hpp"
 #include "geometry_msgs/Pose.hpp"
+#include "geometry_msgs/PoseStamped.hpp"
 #include "geometry_msgs/PoseWithCovariance.hpp"
 #include "geometry_msgs/Quaternion.hpp"
 #include "geometry_msgs/Transform.hpp"

@@ -115,7 +115,7 @@ public:
     }
     
     template <typename MsgT>
-    std::shared_ptr<Subscription<MsgT>> create_subscription(const char* name, std::function<void(MsgT*)> callback)
+    std::shared_ptr<Subscription<MsgT>> create_subscription(const char* name, std::function<void(std::shared_ptr<MsgT>)> callback)
     {
       bool ret = false;
 

@@ -54,6 +54,19 @@
 
 #include "tf2_msgs/TFMessage.hpp"
 
+#include "rcl_interfaces/FloatingPointRange.hpp"
+#include "rcl_interfaces/IntegerRange.hpp"
+#include "rcl_interfaces/IntraProcessMessage.hpp"
+#include "rcl_interfaces/ListParametersResult.hpp"
+#include "rcl_interfaces/Log.hpp"
+#include "rcl_interfaces/Parameter.hpp"
+#include "rcl_interfaces/ParameterDescriptor.hpp"
+#include "rcl_interfaces/ParameterEvent.hpp"
+#include "rcl_interfaces/ParameterEventDescriptors.hpp"
+#include "rcl_interfaces/ParameterType.hpp"
+#include "rcl_interfaces/ParameterValue.hpp"
+#include "rcl_interfaces/SetParametersResult.hpp"
+
 
 
 #endif /* ROS2_MSG_LIST_HPP_ */

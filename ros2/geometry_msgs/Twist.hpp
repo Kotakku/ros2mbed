@@ -33,6 +33,8 @@ namespace geometry_msgs {
 class Twist : public ros2::Topic<Twist>
 {
 public:
+    using SharedPtr = std::shared_ptr<Twist>;
+    
   geometry_msgs::Vector3 linear;
   geometry_msgs::Vector3 angular;
 

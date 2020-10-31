@@ -23,7 +23,7 @@ class Log: public ros2::Topic<Log>
 {
 public:
     using SharedPtr = std::shared_ptr<Log>;
-    
+
     builtin_interfaces::Time stamp;
     uint8_t level;
     std::string name;
@@ -44,10 +44,10 @@ public:
         ucdrBuffer* writer = (ucdrBuffer*)msg_buf;
         (void) stamp.serialize(writer, &topic->stamp);
         (void) ucdr_serialize_uint8_t(writer, topic->level);
-        (void) ucdr_serialize_string(writer, topic->name.data());
-        (void) ucdr_serialize_string(writer, topic->msg.data());
-        (void) ucdr_serialize_string(writer, topic->file.data());
-        (void) ucdr_serialize_string(writer, topic->function.data());
+        (void) ucdr_serialize_string(writer, topic->name);
+        (void) ucdr_serialize_string(writer, topic->msg);
+        (void) ucdr_serialize_string(writer, topic->file);
+        (void) ucdr_serialize_string(writer, topic->function);
         (void) ucdr_serialize_uint32_t(writer, topic->line);
 
         return !writer->error;
@@ -58,10 +58,10 @@ public:
         ucdrBuffer* reader = (ucdrBuffer*)msg_buf;
         (void) stamp.deserialize(reader, &topic->stamp);
         (void) ucdr_deserialize_uint8_t(reader, &topic->level);
-        (void) ucdr_deserialize_string(reader, topic->name.data(), topic->name.capacity());
-        (void) ucdr_deserialize_string(reader, topic->msg.data(), topic->msg.capacity());
-        (void) ucdr_deserialize_string(reader, topic->file.data(), topic->file.capacity());
-        (void) ucdr_deserialize_string(reader, topic->function.data(), topic->function.capacity());
+        (void) ucdr_deserialize_string(reader, topic->name);
+        (void) ucdr_deserialize_string(reader, topic->msg);
+        (void) ucdr_deserialize_string(reader, topic->file);
+        (void) ucdr_deserialize_string(reader, topic->function);
         (void) ucdr_deserialize_uint32_t(reader, &topic->line);
 
         return !reader->error;
@@ -74,10 +74,10 @@ public:
         uint32_t previousSize = size;
         size += stamp.size_of_topic(&topic->stamp, size);
         size += ucdr_alignment(size, 1) + 1;
-        size += ucdr_alignment(size, 4) + 4 + (uint32_t)(topic->name.length() + 1);
-        size += ucdr_alignment(size, 4) + 4 + (uint32_t)(topic->msg.length() + 1);
-        size += ucdr_alignment(size, 4) + 4 + (uint32_t)(topic->file.length() + 1);
-        size += ucdr_alignment(size, 4) + 4 + (uint32_t)(topic->function.length() + 1);
+        size += ucdr_alignment(size, 4) + 4 + (uint32_t)(topic->name.length());
+        size += ucdr_alignment(size, 4) + 4 + (uint32_t)(topic->msg.length());
+        size += ucdr_alignment(size, 4) + 4 + (uint32_t)(topic->file.length());
+        size += ucdr_alignment(size, 4) + 4 + (uint32_t)(topic->function.length());
         size += ucdr_alignment(size, 4) + 4;
 
         return size - previousSize;

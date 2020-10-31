@@ -10,7 +10,9 @@
 
 
 #include "std_msgs/Bool.hpp"
+#include "std_msgs/Byte.hpp"
 #include "std_msgs/Char.hpp"
+#include "std_msgs/ColorRGBA.hpp"
 #include "std_msgs/Empty.hpp"
 #include "std_msgs/Header.hpp"
 #include "std_msgs/Char.hpp"

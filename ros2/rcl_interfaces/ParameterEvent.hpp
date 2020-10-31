@@ -36,7 +36,7 @@ public:
     {
         ucdrBuffer* writer = (ucdrBuffer*)msg_buf;
         (void) stamp.serialize(writer, &topic->stamp);
-        (void) ucdr_serialize_string(writer, topic->node.data());
+        (void) ucdr_serialize_string(writer, topic->node);
         for(size_t i = 0; i < topic->new_parameters.size(); i++)
         {
             (void) new_parameters[i].serialize(writer, &topic->new_parameters[i]);
@@ -57,7 +57,7 @@ public:
     {
         ucdrBuffer* reader = (ucdrBuffer*)msg_buf;
         (void) stamp.deserialize(reader, &topic->stamp);
-        (void) ucdr_deserialize_string(reader, topic->node.data(), topic->node.capacity());
+        (void) ucdr_deserialize_string(reader, topic->node);
         for(size_t i = 0; i < topic->new_parameters.size(); i++)
         {
             (void) new_parameters[i].deserialize(reader, &topic->new_parameters[i]);
@@ -80,7 +80,7 @@ public:
 
         uint32_t previousSize = size;
         size += stamp.size_of_topic(&topic->stamp, size);
-        size += ucdr_alignment(size, 4) + 4 + (uint32_t)(topic->node.length() + 1);
+        size += ucdr_alignment(size, 4) + 4 + (uint32_t)(topic->node.length());
         for(size_t i = 0; i < topic->new_parameters.size(); i++)
         {
             size += new_parameters[i].size_of_topic(&topic->new_parameters[i], size);

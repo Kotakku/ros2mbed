@@ -43,7 +43,7 @@ public:
         (void) (topic);
 
         uint32_t previousSize = size;
-        size += ucdr_alignment(size, 4) + 4 + (uint32_t)(topic->data.length() + 1);
+        size += ucdr_alignment(size, 4) + 4 + (uint32_t)(topic->data.length());
 
         return size - previousSize;
     }

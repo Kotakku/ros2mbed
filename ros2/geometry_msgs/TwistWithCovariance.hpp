@@ -32,6 +32,7 @@ namespace geometry_msgs {
 class TwistWithCovariance : public ros2::Topic<TwistWithCovariance>
 {
 public:
+    using SharedPtr = std::shared_ptr<TwistWithCovariance>;
   geometry_msgs::Twist twist;
   double covariance[36];
 

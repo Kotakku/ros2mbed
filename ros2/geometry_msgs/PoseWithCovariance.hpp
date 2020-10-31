@@ -33,6 +33,7 @@ namespace geometry_msgs {
 class PoseWithCovariance : public ros2::Topic<PoseWithCovariance>
 {
 public:
+    using SharedPtr = std::shared_ptr<PoseWithCovariance>;
   geometry_msgs::Pose pose;
   double covariance[36];
 

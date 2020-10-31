@@ -25,6 +25,8 @@ enum
 class ParameterType: public ros2::Topic<ParameterType>
 {
 public:
+    using SharedPtr = std::shared_ptr<ParameterType>;
+
     uint8_t structure_needs_at_least_one_member;
 
     ParameterType()

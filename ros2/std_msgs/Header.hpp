@@ -14,6 +14,8 @@ namespace std_msgs
 class Header: public ros2::Topic<Header>
 {
 public:
+    using SharedPtr = std::shared_ptr<Header>;
+    
     builtin_interfaces::Time stamp;
     std::string frame_id;
 
@@ -22,7 +24,7 @@ public:
     {
     }
 
-    bool serialize(void* msg_buf, const Header* topic)
+    bool serialize(void* msg_buf, Header* topic)
     {
         ucdrBuffer* writer = (ucdrBuffer*)msg_buf;
         (void) stamp.serialize(writer, &topic->stamp);

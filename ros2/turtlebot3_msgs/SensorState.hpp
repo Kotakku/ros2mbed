@@ -33,6 +33,8 @@ namespace turtlebot3_msgs {
 class SensorState : public ros2::Topic<SensorState>
 {
 public: 
+    using SharedPtr = std::shared_ptr<SensorState>;
+    
     std_msgs::Header header;
     uint8_t bumper;
     float cliff;
@@ -53,7 +55,7 @@ public:
   { 
   }
 
-  bool serialize(void* msg_buf, const SensorState* topic)
+  bool serialize(void* msg_buf, SensorState* topic)
   {
     ucdrBuffer* writer = (ucdrBuffer*)msg_buf;
     (void) header.serialize(writer, &topic->header);

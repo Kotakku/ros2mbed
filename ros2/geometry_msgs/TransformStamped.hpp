@@ -46,7 +46,7 @@ public:
     memset(child_frame_id, 0, sizeof(child_frame_id));
   }
 
-  bool serialize(void* msg_buf, const TransformStamped* topic)
+  bool serialize(void* msg_buf, TransformStamped* topic)
   {
     ucdrBuffer* writer = (ucdrBuffer*)msg_buf;
     (void) header.serialize(writer, &topic->header);

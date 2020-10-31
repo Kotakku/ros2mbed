@@ -24,6 +24,8 @@ namespace std_msgs
 class Empty: public ros2::Topic<Empty>
 {
   public:
+    using SharedPtr = std::shared_ptr<Empty>;
+    
     bool _dummy;
 
     Empty()
@@ -32,7 +34,7 @@ class Empty: public ros2::Topic<Empty>
     {
     }
 
-    bool serialize(void* msg_buf, const Empty* topic)
+    bool serialize(void* msg_buf, Empty* topic)
     {
       ucdrBuffer* writer = (ucdrBuffer*)msg_buf;
       ucdr_serialize_bool(writer, topic->_dummy);

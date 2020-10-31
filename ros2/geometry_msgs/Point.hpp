@@ -42,7 +42,7 @@ public:
   }
 
 
-  bool serialize(void* msg_buf, const Point* topic)
+  bool serialize(void* msg_buf, Point* topic)
   {
     ucdrBuffer* writer = (ucdrBuffer*)msg_buf;
     (void) ucdr_serialize_double(writer, topic->x);

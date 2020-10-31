@@ -10,6 +10,7 @@
 
 #include <stdint.h>
 #include "micro_xrce_dds/micro_xrce_dds.h"
+#include "xrcedds_cpp_helper.hpp"
 
 namespace xrcedds {
 

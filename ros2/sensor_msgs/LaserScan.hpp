@@ -33,6 +33,8 @@ namespace sensor_msgs {
 class LaserScan : public ros2::Topic<LaserScan>
 {
 public: 
+    using SharedPtr = std::shared_ptr<LaserScan>;
+    
     std_msgs::Header header;
     float angle_min;
     float angle_max;
@@ -57,7 +59,7 @@ public:
     memset(intensities, 0, sizeof(intensities));
   }
 
-  bool serialize(void* msg_buf, const LaserScan* topic)
+  bool serialize(void* msg_buf, LaserScan* topic)
   {
     ucdrBuffer* writer = (ucdrBuffer*)msg_buf;
     (void) header.serialize(writer, &topic->header);

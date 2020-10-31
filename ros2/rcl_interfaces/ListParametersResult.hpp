@@ -26,7 +26,7 @@ public:
         memset(prefixes, 0, sizeof(prefixes));
     }
 
-    bool serialize(void* msg_buf, const ListParametersResult* topic)
+    bool serialize(void* msg_buf, ListParametersResult* topic)
     {
         ucdrBuffer* writer = (ucdrBuffer*)msg_buf;
         (void) ucdr_serialize_sequence_string(writer, topic->names, topic->names_size);

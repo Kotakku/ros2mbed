@@ -11,6 +11,8 @@ namespace rcl_interfaces
 class IntraProcessMessage: public ros2::Topic<IntraProcessMessage>
 {
 public:
+    using SharedPtr = std::shared_ptr<IntraProcessMessage>;
+    
     uint64_t publisher_id;
     uint64_t message_sequence;
 
@@ -21,7 +23,7 @@ public:
     {
     }
 
-    bool serialize(void* msg_buf, const IntraProcessMessage* topic)
+    bool serialize(void* msg_buf, IntraProcessMessage* topic)
     {
         ucdrBuffer* writer = (ucdrBuffer*)msg_buf;
         (void) ucdr_serialize_uint64_t(writer, topic->publisher_id);

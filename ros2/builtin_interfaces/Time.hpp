@@ -11,6 +11,8 @@ namespace builtin_interfaces
 class Time: public ros2::Topic<Time>
 {
 public:
+    using SharedPtr = std::shared_ptr<Time>;
+    
     int32_t sec;
     uint32_t nanosec;
 
@@ -21,7 +23,7 @@ public:
     {
     }
 
-    bool serialize(void* msg_buf, const Time* topic)
+    bool serialize(void* msg_buf, Time* topic)
     {
         ucdrBuffer* writer = (ucdrBuffer*)msg_buf;
         (void) ucdr_serialize_int32_t(writer, topic->sec);

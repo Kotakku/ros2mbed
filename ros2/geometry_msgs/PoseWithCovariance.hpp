@@ -43,7 +43,7 @@ public:
     memset(covariance, 0, sizeof(covariance));
   }
 
-  bool serialize(void* msg_buf, const PoseWithCovariance* topic)
+  bool serialize(void* msg_buf, PoseWithCovariance* topic)
   {
     ucdrBuffer* writer = (ucdrBuffer*)msg_buf;
     (void) pose.serialize(writer, &topic->pose);

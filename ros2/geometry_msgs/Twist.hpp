@@ -46,7 +46,7 @@ public:
   }
 
 
-  bool serialize(void* msg_buf, const Twist* topic)
+  bool serialize(void* msg_buf, Twist* topic)
   {
     ucdrBuffer* writer = (ucdrBuffer*)msg_buf;
     (void) linear.serialize(writer, &topic->linear);

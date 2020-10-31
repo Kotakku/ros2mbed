@@ -34,6 +34,8 @@ namespace sensor_msgs {
 class MagneticField : public ros2::Topic<MagneticField>
 {
 public: 
+    using SharedPtr = std::shared_ptr<MagneticField>;
+    
     std_msgs::Header header;
     geometry_msgs::Vector3 magnetic_field;
     double magnetic_field_covariance[9];
@@ -45,7 +47,7 @@ public:
     memset(magnetic_field_covariance, 0, sizeof(magnetic_field_covariance));
   }
 
-  bool serialize(void* msg_buf, const MagneticField* topic)
+  bool serialize(void* msg_buf, MagneticField* topic)
   {
     ucdrBuffer* writer = (ucdrBuffer*)msg_buf;
     (void) header.serialize(writer, &topic->header);

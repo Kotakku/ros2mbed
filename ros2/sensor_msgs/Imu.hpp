@@ -36,6 +36,8 @@ namespace sensor_msgs {
 class Imu : public ros2::Topic<Imu>
 {
 public: 
+    using SharedPtr = std::shared_ptr<Imu>;
+    
     std_msgs::Header header;
     geometry_msgs::Quaternion orientation;
     double orientation_covariance[9];
@@ -53,7 +55,7 @@ public:
     memset(linear_acceleration_covariance, 0, sizeof(linear_acceleration_covariance));
   }
 
-  bool serialize(void* msg_buf, const Imu* topic)
+  bool serialize(void* msg_buf, Imu* topic)
   {
     ucdrBuffer* writer = (ucdrBuffer*)msg_buf;
     (void) header.serialize(writer, &topic->header);

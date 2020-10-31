@@ -42,7 +42,7 @@ public:
     memset(covariance, 0, sizeof(covariance));
   }
 
-  bool serialize(void* msg_buf, const TwistWithCovariance* topic)
+  bool serialize(void* msg_buf, TwistWithCovariance* topic)
   {
     ucdrBuffer* writer = (ucdrBuffer*)msg_buf;
     (void) twist.serialize(writer, &topic->twist);

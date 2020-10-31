@@ -11,6 +11,8 @@ namespace builtin_interfaces
 class Duration: public ros2::Topic<Duration>
 {
 public:
+    using SharedPtr = std::shared_ptr<Duration>;
+    
     int32_t sec;
     uint32_t nanosec;
 
@@ -21,7 +23,7 @@ public:
     {
     }
 
-    bool serialize(void* msg_buf, const Duration* topic)
+    bool serialize(void* msg_buf, Duration* topic)
     {
         ucdrBuffer* writer = (ucdrBuffer*)msg_buf;
         (void) ucdr_serialize_int32_t(writer, topic->sec);

@@ -42,7 +42,7 @@ public:
   }
 
 
-  bool serialize(void* msg_buf, const Vector3* topic)
+  bool serialize(void* msg_buf, Vector3* topic)
   {
     ucdrBuffer* writer = (ucdrBuffer*)msg_buf;
     (void) ucdr_serialize_double(writer, topic->x);

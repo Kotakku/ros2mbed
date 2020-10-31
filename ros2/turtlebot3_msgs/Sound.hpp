@@ -31,6 +31,8 @@ namespace turtlebot3_msgs {
 class Sound : public ros2::Topic<Sound>
 {
 public: 
+    using SharedPtr = std::shared_ptr<Sound>;
+    
     uint8_t value;
 
   Sound():
@@ -39,7 +41,7 @@ public:
   { 
   }
 
-  bool serialize(void* msg_buf, const Sound* topic)
+  bool serialize(void* msg_buf, Sound* topic)
   {
     ucdrBuffer* writer = (ucdrBuffer*)msg_buf;
     (void) ucdr_serialize_uint8_t(writer, topic->value);

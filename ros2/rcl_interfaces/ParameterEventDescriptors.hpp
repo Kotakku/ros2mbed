@@ -24,7 +24,7 @@ public:
     {
     }
 
-    bool serialize(void* msg_buf, const ParameterEventDescriptors* topic)
+    bool serialize(void* msg_buf, ParameterEventDescriptors* topic)
     {
         ucdrBuffer* writer = (ucdrBuffer*)msg_buf;
         for(uint8_t i = 0; i < sizeof(new_parameters)/sizeof(rcl_interfaces::ParameterDescriptor); i++)

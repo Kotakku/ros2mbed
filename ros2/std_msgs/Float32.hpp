@@ -24,6 +24,8 @@ namespace std_msgs {
 class Float32 : public ros2::Topic<Float32>
 {
 public:
+    using SharedPtr = std::shared_ptr<Float32>;
+    
   float data;
 
   Float32():
@@ -32,7 +34,7 @@ public:
   { 
   }
 
-  bool serialize(void* msg_buf, const Float32* topic)
+  bool serialize(void* msg_buf, Float32* topic)
   {
     ucdrBuffer* writer = (ucdrBuffer*)msg_buf;
     (void) ucdr_serialize_float(writer, topic->data);

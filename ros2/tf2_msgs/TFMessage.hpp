@@ -32,6 +32,8 @@ namespace tf2_msgs {
 class TFMessage : public ros2::Topic<TFMessage>
 {
 public: 
+    using SharedPtr = std::shared_ptr<TFMessage>;
+    
   geometry_msgs::TransformStamped transforms[4];
 
   TFMessage():
@@ -39,7 +41,7 @@ public:
   { 
   }
 
-  bool serialize(void* msg_buf, const TFMessage* topic)
+  bool serialize(void* msg_buf, TFMessage* topic)
   {
     ucdrBuffer* writer = (ucdrBuffer*)msg_buf;
     for(uint8_t i = 0; i < sizeof(transforms)/sizeof(geometry_msgs::TransformStamped); i++)

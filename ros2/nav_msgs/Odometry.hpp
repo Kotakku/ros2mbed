@@ -30,7 +30,7 @@ public:
     {
     }
 
-    bool serialize(void* msg_buf, const Odometry* topic)
+    bool serialize(void* msg_buf, Odometry* topic)
     {
         ucdrBuffer* writer = (ucdrBuffer*)msg_buf;
         (void) header.serialize(writer, &topic->header);

@@ -11,6 +11,8 @@ namespace rcl_interfaces
 class FloatingPointRange: public ros2::Topic<FloatingPointRange>
 {
 public:
+    using SharedPtr = std::shared_ptr<FloatingPointRange>;
+    
     double from_value;
     double to_value;
     double step;
@@ -23,7 +25,7 @@ public:
     {
     }
 
-    bool serialize(void* msg_buf, const FloatingPointRange* topic)
+    bool serialize(void* msg_buf, FloatingPointRange* topic)
     {
         ucdrBuffer* writer = (ucdrBuffer*)msg_buf;
         (void) ucdr_serialize_double(writer, topic->from_value);

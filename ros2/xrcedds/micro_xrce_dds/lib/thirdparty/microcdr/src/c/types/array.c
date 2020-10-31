@@ -16,8 +16,10 @@
 
 #include <string.h>
 
+/*
 static void ucdr_array_to_buffer(ucdrBuffer* ub, const uint8_t* array, size_t size, size_t data_size);
 static void ucdr_buffer_to_array(ucdrBuffer* ub, uint8_t* array, size_t size, size_t data_size);
+*/
 
 // -------------------------------------------------------------------
 //                         SERIALIZE MACROS

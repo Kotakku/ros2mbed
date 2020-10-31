@@ -22,6 +22,8 @@ enum Log_Constants
 class Log: public ros2::Topic<Log>
 {
 public:
+    using SharedPtr = std::shared_ptr<Log>;
+    
     builtin_interfaces::Time stamp;
     uint8_t level;
     std::string name;
@@ -37,7 +39,7 @@ public:
     {
     }
 
-    bool serialize(void* msg_buf, const Log* topic)
+    bool serialize(void* msg_buf, Log* topic)
     {
         ucdrBuffer* writer = (ucdrBuffer*)msg_buf;
         (void) stamp.serialize(writer, &topic->stamp);

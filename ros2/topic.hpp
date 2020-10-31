@@ -14,6 +14,7 @@
 #include <vector>
 #include "xrcedds/xrcedds.hpp"
 #include "topic_id_number.h"
+#include "common_internal.h"
 
 namespace ros2 {
 
@@ -36,7 +37,7 @@ public:
   {
   }
 
-  virtual bool serialize(void* msg_buf, const MsgT* topic) = 0;
+  virtual bool serialize(void* msg_buf, MsgT* topic) = 0;
   virtual bool deserialize(void* msg_buf, MsgT* topic) = 0;
   virtual uint32_t size_of_topic(const MsgT* topic, uint32_t size)
   {

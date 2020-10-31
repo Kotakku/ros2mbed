@@ -21,7 +21,7 @@ public:
         memset(reason, 0, sizeof(reason));
     }
 
-    bool serialize(void* msg_buf, const SetParametersResult* topic)
+    bool serialize(void* msg_buf, SetParametersResult* topic)
     {
         ucdrBuffer* writer = (ucdrBuffer*)msg_buf;
         (void) ucdr_serialize_bool(writer, topic->successful);

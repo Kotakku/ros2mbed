@@ -14,6 +14,8 @@ namespace rcl_interfaces
 class Parameter: public ros2::Topic<Parameter>
 {
 public:
+    using SharedPtr = std::shared_ptr<Parameter>;
+    
     std::string name;
     rcl_interfaces::ParameterValue value;
 
@@ -22,10 +24,10 @@ public:
     {
     }
 
-    bool serialize(void* msg_buf, const Parameter* topic)
+    bool serialize(void* msg_buf, Parameter* topic)
     {
         ucdrBuffer* writer = (ucdrBuffer*)msg_buf;
-        (void) ucdr_serialize_string(writer, topic->name.data());
+        (void) ucdr_serialize_string(writer, topic->name);
         (void) value.serialize(writer, &topic->value);
 
         return !writer->error;
@@ -34,7 +36,7 @@ public:
     bool deserialize(void* msg_buf, Parameter* topic)
     {
         ucdrBuffer* reader = (ucdrBuffer*)msg_buf;
-        (void) ucdr_deserialize_string(reader, topic->name.data(), topic->name.capacity());
+        (void) ucdr_deserialize_string(reader, topic->name);
         (void) value.deserialize(reader, &topic->value);
 
         return !reader->error;

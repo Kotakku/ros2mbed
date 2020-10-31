@@ -30,7 +30,9 @@ namespace turtlebot3_msgs {
 
 class VersionInfo : public ros2::Topic<VersionInfo>
 {
-public: 
+public:
+    using SharedPtr = std::shared_ptr<VersionInfo>;
+    
     char hardware[255];
     char firmware[255];
     char software[255];
@@ -43,7 +45,7 @@ public:
     memset(software, 0, sizeof(software));
   }
 
-  bool serialize(void* msg_buf, const VersionInfo* topic)
+  bool serialize(void* msg_buf, VersionInfo* topic)
   {
     ucdrBuffer* writer = (ucdrBuffer*)msg_buf;
     (void) ucdr_serialize_string(writer, topic->hardware);

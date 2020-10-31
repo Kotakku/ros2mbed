@@ -23,7 +23,9 @@ namespace std_msgs
 
 class Bool: public ros2::Topic<Bool>
 {
-  public:
+public:
+    using SharedPtr = std::shared_ptr<Bool>;
+    
     bool data;
 
     Bool()
@@ -32,7 +34,7 @@ class Bool: public ros2::Topic<Bool>
     {
     }
 
-    bool serialize(void* msg_buf, const Bool* topic)
+    bool serialize(void* msg_buf, Bool* topic)
     {
       ucdrBuffer* writer = (ucdrBuffer*)msg_buf;
       (void) ucdr_serialize_bool(writer, topic->data);

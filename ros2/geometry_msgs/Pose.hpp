@@ -45,7 +45,7 @@ public:
   }
 
 
-  bool serialize(void* msg_buf, const Pose* topic)
+  bool serialize(void* msg_buf, Pose* topic)
   {
     ucdrBuffer* writer = (ucdrBuffer*)msg_buf;
     (void) position.serialize(writer, &topic->position);

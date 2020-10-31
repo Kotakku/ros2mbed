@@ -33,7 +33,7 @@ public:
     {
     }
 
-    bool serialize(void* msg_buf, const ParameterType* topic)
+    bool serialize(void* msg_buf, ParameterType* topic)
     {
         ucdrBuffer* writer = (ucdrBuffer*)msg_buf;
         (void) ucdr_serialize_uint8_t(writer, topic->structure_needs_at_least_one_member);

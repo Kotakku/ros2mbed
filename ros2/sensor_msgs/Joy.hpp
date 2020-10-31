@@ -32,6 +32,8 @@ namespace sensor_msgs {
 class Joy : public ros2::Topic<Joy>
 {
 public: 
+    using SharedPtr = std::shared_ptr<Joy>;
+    
     std_msgs::Header header;
     uint32_t axes_size;
     float axes[10];
@@ -47,7 +49,7 @@ public:
     memset(buttons, 0, sizeof(buttons));
   }
 
-  bool serialize(void* msg_buf, const Joy* topic)
+  bool serialize(void* msg_buf, Joy* topic)
   {
     ucdrBuffer* writer = (ucdrBuffer*)msg_buf;
     (void) header.serialize(writer, &topic->header);

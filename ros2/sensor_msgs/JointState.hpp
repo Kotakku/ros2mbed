@@ -32,6 +32,8 @@ namespace sensor_msgs {
 class JointState : public ros2::Topic<JointState>
 {
 public: 
+    using SharedPtr = std::shared_ptr<JointState>;
+    
     std_msgs::Header header;
     char name[10][32];
     uint32_t name_size;
@@ -53,7 +55,7 @@ public:
     memset(effort, 0, sizeof(effort));
   }
 
-  bool serialize(void* msg_buf, const JointState* topic)
+  bool serialize(void* msg_buf, JointState* topic)
   {
     ucdrBuffer* writer = (ucdrBuffer*)msg_buf;
     (void) header.serialize(writer, &topic->header);

@@ -11,6 +11,8 @@ namespace rcl_interfaces
 class IntegerRange: public ros2::Topic<IntegerRange>
 {
 public:
+    using SharedPtr = std::shared_ptr<IntegerRange>;
+    
     int64_t from_value;
     int64_t to_value;
     uint64_t step;
@@ -23,7 +25,7 @@ public:
     {
     }
 
-    bool serialize(void* msg_buf, const IntegerRange* topic)
+    bool serialize(void* msg_buf, IntegerRange* topic)
     {
         ucdrBuffer* writer = (ucdrBuffer*)msg_buf;
         (void) ucdr_serialize_int64_t(writer, topic->from_value);

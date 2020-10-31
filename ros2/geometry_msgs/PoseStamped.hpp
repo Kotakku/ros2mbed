@@ -25,7 +25,7 @@ public:
     {
     }
 
-    bool serialize(void* msg_buf, const PoseStamped* topic)
+    bool serialize(void* msg_buf, PoseStamped* topic)
     {
         ucdrBuffer* writer = (ucdrBuffer*)msg_buf;
         (void) header.serialize(writer, &topic->header);

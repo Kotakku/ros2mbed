@@ -62,6 +62,10 @@ typedef struct ucdrBuffer
 //                 Main functions
 // ------------------------------------------------
 
+UCDRDLLAPI void ucdr_array_to_buffer(ucdrBuffer* ub, const uint8_t* array, size_t size, size_t data_size);
+UCDRDLLAPI void ucdr_deserialize_sequence_header(ucdrBuffer* ub, ucdrEndianness endianness, size_t capacity, uint32_t* length);
+UCDRDLLAPI void ucdr_buffer_to_array(ucdrBuffer* ub, uint8_t* array, size_t size, size_t data_size);
+
 UCDRDLLAPI void ucdr_init_buffer                        (ucdrBuffer* ub, uint8_t* data, size_t size);
 UCDRDLLAPI void ucdr_init_buffer_origin                 (ucdrBuffer* ub, uint8_t* data, size_t size, size_t origin);
 UCDRDLLAPI void ucdr_init_buffer_origin_offset          (ucdrBuffer* ub, uint8_t* data, size_t size, size_t origin, size_t offset);

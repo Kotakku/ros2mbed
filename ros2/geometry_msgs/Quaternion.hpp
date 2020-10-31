@@ -43,7 +43,7 @@ public:
   }
 
 
-  bool serialize(void* msg_buf, const Quaternion* topic)
+  bool serialize(void* msg_buf, Quaternion* topic)
   {
     ucdrBuffer* writer = (ucdrBuffer*)msg_buf;
     (void) ucdr_serialize_double(writer, topic->x);

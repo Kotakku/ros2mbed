@@ -45,7 +45,7 @@ public:
   }
 
 
-  bool serialize(void* msg_buf, const Transform* topic)
+  bool serialize(void* msg_buf, Transform* topic)
   {
     ucdrBuffer* writer = (ucdrBuffer*)msg_buf;
     (void) translation.serialize(writer, &topic->translation);

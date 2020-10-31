@@ -24,6 +24,8 @@ namespace std_msgs {
 class UInt8 : public ros2::Topic<UInt8>
 {
 public:
+    using SharedPtr = std::shared_ptr<UInt8>;
+    
   uint8_t data;
 
   UInt8():
@@ -32,7 +34,7 @@ public:
   { 
   }
 
-  bool serialize(void* msg_buf, const UInt8* topic)
+  bool serialize(void* msg_buf, UInt8* topic)
   {
     ucdrBuffer* writer = (ucdrBuffer*)msg_buf;
     (void) ucdr_serialize_uint8_t(writer, topic->data);

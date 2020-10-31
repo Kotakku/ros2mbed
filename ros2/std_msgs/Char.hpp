@@ -24,6 +24,8 @@ namespace std_msgs
 class Char: public ros2::Topic<Char>
 {
   public:
+    using SharedPtr = std::shared_ptr<Char>;
+    
     char data;
 
     Char()
@@ -32,7 +34,7 @@ class Char: public ros2::Topic<Char>
     {
     }
 
-    bool serialize(void* msg_buf, const Char* topic)
+    bool serialize(void* msg_buf, Char* topic)
     {
       ucdrBuffer* writer = (ucdrBuffer*)msg_buf;
       (void) ucdr_serialize_char(writer, topic->data);

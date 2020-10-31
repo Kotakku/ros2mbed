@@ -19,7 +19,7 @@ public:
     {
     }
 
-    bool serialize(void* msg_buf, const KeyValue* topic)
+    bool serialize(void* msg_buf, KeyValue* topic)
     {
         ucdrBuffer* writer = (ucdrBuffer*)msg_buf;
         (void) ucdr_serialize_string(writer, topic->key.data());

@@ -14,7 +14,7 @@
 
 #include <ucdr/microcdr.h>
 
-static void ucdr_deserialize_sequence_header(ucdrBuffer* ub, ucdrEndianness endianness, size_t capacity, uint32_t* length);
+//static void ucdr_deserialize_sequence_header(ucdrBuffer* ub, ucdrEndianness endianness, size_t capacity, uint32_t* length);
 
 // -------------------------------------------------------------------
 //                INTERNAL UTIL IMPLEMENTATION

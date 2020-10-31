@@ -24,6 +24,8 @@ namespace std_msgs {
 class Float64 : public ros2::Topic<Float64>
 {
 public:
+    using SharedPtr = std::shared_ptr<Float64>;
+    
   double data;
 
   Float64():
@@ -32,7 +34,7 @@ public:
   { 
   }
 
-  bool serialize(void* msg_buf, const Float64* topic)
+  bool serialize(void* msg_buf, Float64* topic)
   {
     ucdrBuffer* writer = (ucdrBuffer*)msg_buf;
     (void) ucdr_serialize_double(writer, topic->data);

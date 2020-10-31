@@ -67,6 +67,8 @@ enum BatteryTechnology
 class BatteryState : public ros2::Topic<BatteryState>
 {
 public: 
+    using SharedPtr = std::shared_ptr<BatteryState>;
+    
     std_msgs::Header header;
     float voltage;
     float current;
@@ -95,7 +97,7 @@ public:
     memset(serial_number, 0, sizeof(serial_number));
   }
 
-  bool serialize(void* msg_buf, const BatteryState* topic)
+  bool serialize(void* msg_buf, BatteryState* topic)
   {
     ucdrBuffer* writer = (ucdrBuffer*)msg_buf;
     (void) header.serialize(writer, &topic->header);

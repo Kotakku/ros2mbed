@@ -122,7 +122,7 @@ bool uxr_initUdpMbed(void* udp_instance, const char* ip_address, uint16_t port)
   }
   
   // ?
-  ThisThread::sleep_for(5s);
+  //ThisThread::sleep_for(5s);
 
   return is_udp_connect;
 }
@@ -143,6 +143,9 @@ size_t uxr_writeUdpDataMbed(const uint8_t* buf, size_t len)
 
   tx_len = udp_socket->send(buf, len);
 
+  if(tx_len <= 0)
+    printf("tx: %d\n", tx_len);
+
   return (tx_len > 0 ? tx_len : 0);
 }
 
@@ -156,17 +159,17 @@ size_t uxr_readUdpDataMbed(uint8_t* buf, size_t len, int timeout)
       //ThisThread::sleep_for(1ms);
       recv_mutex.lock();
       rv = recv_buf.size();
+      if(rv)
+      {
+        for(size_t i = 0; i < rv; i++)
+        {
+          recv_buf.pop(buf[i]);
+        }
+      }
       recv_mutex.unlock();
   }
-  
-  recv_mutex.lock();
-  for(size_t i = 0; i < rv; i++)
-  {
-    recv_buf.pop(buf[i]);
-  }
-  recv_mutex.unlock();
 
-  return (rv > 0 ? rv : 0);
+  return rv;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////

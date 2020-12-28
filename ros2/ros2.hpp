@@ -38,7 +38,7 @@ void runNodeSubUserCallback(uint16_t id, void* msgs, void* args);
 class Node
 {
 public:
-    Node(const char* node_name = "ros2_xrcedds_participant",unsigned int client_key=0xAABBCCDD);
+    Node(const std::string node_name = "ros2_xrcedds_participant",unsigned int client_key=0xAABBCCDD);
     virtual ~Node(){};
 
     bool getNodeRegisteredState();
@@ -65,13 +65,13 @@ public:
     void run_timer_callback();
     void run_sub_callback(uint16_t reader_id, void* serialized_msg);
 
-    void delete_publisher(const char* name);
+    void delete_publisher(const std::string name);
     void delete_publisher(uint16_t writer_id);
-    void delete_subscriber(const char* name);
+    void delete_subscriber(const std::string name);
     void delete_subscriber(uint16_t reader_id);
 
     template <typename MsgT>
-    std::shared_ptr<Publisher<MsgT>> create_publisher(const char* name)
+    std::shared_ptr<Publisher<MsgT>> create_publisher(const std::string name)
     {
       bool ret = false;
 
@@ -93,7 +93,7 @@ public:
         return nullptr;
       }
       
-      auto p_pub = std::make_shared<ros2::Publisher<MsgT>>(&this->xrcedds_publisher_, name);
+      auto p_pub = std::make_shared<ros2::Publisher<MsgT>>(&this->xrcedds_publisher_, name.c_str());
 
       if (p_pub->is_registered_ == false)
       {
@@ -115,7 +115,7 @@ public:
     }
     
     template <typename MsgT>
-    std::shared_ptr<Subscription<MsgT>> create_subscription(const char* name, std::function<void(std::shared_ptr<MsgT>)> callback)
+    std::shared_ptr<Subscription<MsgT>> create_subscription(const std::string name, std::function<void(std::shared_ptr<MsgT>)> callback)
     {
       bool ret = false;
 
@@ -137,7 +137,7 @@ public:
         return nullptr;
       }
 
-      auto p_sub = std::make_shared<ros2::Subscription<MsgT>>(&this->xrcedds_subscriber_, name, callback);
+      auto p_sub = std::make_shared<ros2::Subscription<MsgT>>(&this->xrcedds_subscriber_, name.c_str(), callback);
 
       if(p_sub->is_registered_ == false)
       {

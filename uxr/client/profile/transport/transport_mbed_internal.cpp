@@ -143,9 +143,6 @@ size_t uxr_writeUdpDataMbed(const uint8_t* buf, size_t len)
 
   tx_len = udp_socket->send(buf, len);
 
-  if(tx_len <= 0)
-    printf("tx: %d\n", tx_len);
-
   return (tx_len > 0 ? tx_len : 0);
 }
 
@@ -168,8 +165,8 @@ size_t uxr_readUdpDataMbed(uint8_t* buf, size_t len, int timeout)
       }
       recv_mutex.unlock();
   }
-
-  return rv;
+  
+  return (rv > 0 ? rv : 0);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////

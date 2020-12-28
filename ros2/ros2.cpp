@@ -9,6 +9,7 @@
 #include "TimerBase.h"
 #include "mbed.h"
 #include "node_handle.hpp"
+#include <string>
 
 static xrcedds::XrceDdsCommportType g_client_communication_method;
 static const char* g_server_ip;
@@ -136,7 +137,7 @@ void ros2::runNodeSubUserCallback(uint16_t id, void* msgs, void* args)
 
 
 /* Node class */
-ros2::Node::Node(const char* node_name,unsigned int client_key)
+ros2::Node::Node(const std::string node_name,unsigned int client_key)
 {
   pub_cnt_ = 0, sub_cnt_ = 0, node_register_state_ = false;
   for(size_t i = 0; i < ROS2_PUBLISHER_MAX; i++)
@@ -148,7 +149,7 @@ ros2::Node::Node(const char* node_name,unsigned int client_key)
     sub_list_[i] = nullptr;
   }
 
-  this->recreate(node_name,client_key);
+  this->recreate(node_name.c_str(),client_key);
 }
 
 bool ros2::Node::getNodeRegisteredState()
@@ -239,14 +240,14 @@ void ros2::Node::run_sub_callback(uint16_t reader_id, void* serialized_msg)
 }
 
 
-void ros2::Node::delete_publisher(const char* name)
+void ros2::Node::delete_publisher(const std::string name)
 {
   PublisherHandle *publisher;
 
   for(uint8_t i = 0; i < ROS2_SUBSCRIBER_MAX; i++)
   {
     publisher = static_cast<ros2::PublisherHandle *>(pub_list_[i].get());
-    if(publisher != nullptr && !strcmp(publisher->name_, name))
+    if(publisher != nullptr && !strcmp(publisher->name_, name.c_str()))
     {
       publisher->destroy();
       pub_list_[i].reset();
@@ -274,14 +275,14 @@ void ros2::Node::delete_publisher(uint16_t writer_id)
   }
 }
 
-void ros2::Node::delete_subscriber(const char* name)
+void ros2::Node::delete_subscriber(const std::string name)
 {
   SubscriptionHandle *subscriber;
 
   for(uint8_t i = 0; i < ROS2_SUBSCRIBER_MAX; i++)
   {
     subscriber = static_cast<ros2::SubscriptionHandle *>(sub_list_[i].get());
-    if(subscriber != nullptr && !strcmp(subscriber->name_, name))
+    if(subscriber != nullptr && !strcmp(subscriber->name_, name.c_str()))
     {
       subscriber->destroy();
       sub_list_[i].reset();

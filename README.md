@@ -6,8 +6,19 @@ ROS 2 Dashing Diademata
 
 ## Micro-XRCE-DDS-Agent Version
 v1.3.0
+```
+$ git clone https://github.com/eProsima/Micro-XRCE-DDS-Agent.git
+$ cd Micro-XRCE-DDS-Agent && git checkout v1.3.0
+$ mkdir build && cd build
+$ source /opt/ros/dashing/setup.bash # to share libraries with ros2
+$ cmake ..
+$ make
+$ sudo make install
+$ sudo ldconfig /usr/local/lib/
+```
 
 ## Network setting(for Ubuntu)
+UDP通信を使う場合  
 IPv4  
 method: Manual  
 Address: 任意のAddress, Netmask, Gateway
